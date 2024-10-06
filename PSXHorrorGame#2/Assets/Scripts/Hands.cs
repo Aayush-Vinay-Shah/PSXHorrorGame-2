@@ -5,8 +5,10 @@ using UnityEngine;
 public class Hands : MonoBehaviour
 {
     [Header("CamShake")]
+    public Camera playerCamera;
     public float duration;
     public float magnitude;
+    public float interactionDistance;
 
     [Header("Weapon")]
     Animator anim;
@@ -92,5 +94,27 @@ public class Hands : MonoBehaviour
         current.gameObject.SetActive(false);
         current = null;
 
+    }
+
+    public void RaycastInteractionForDetection()
+    {
+        Ray ray = playerCamera.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+
+        // Check if the raycast hits something within the interaction distance
+        if (Physics.Raycast(ray, out hit, interactionDistance))
+        {
+            DetectionObject detectedObject = hit.collider.GetComponent<DetectionObject>();
+            if(detectedObject == null)
+                return;
+
+            if(current.name == detectedObject.name)
+            {
+                detectedObject.DoEvent();
+
+            }
+
+            
+        }
     }
 }
